@@ -25,9 +25,9 @@ var specialCharacters = [
 	".",
 ];
 
-var numericCharacters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+var NumericalChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
-var lowerCasedCharacters = [
+var lowerCaseChars = [
 	"a",
 	"b",
 	"c",
@@ -56,7 +56,7 @@ var lowerCasedCharacters = [
 	"z",
 ];
 
-var upperCasedCharacters = [
+var upperCaseChars = [
 	"A",
 	"B",
 	"C",
@@ -88,7 +88,7 @@ var upperCasedCharacters = [
 //* fuction for password options prompt as well as password length being minimum of 8 and maximum of 128.
 
 function getPasswordOptions() {
-	var length = parseInt(prompt("How many characters would you like your password to contain?"), 10);
+	var length = parseInt(prompt("Requested Length of Password?"), 10);
 
 	if (Number.isNaN(length)) {
 		alert("Password length must be provided as a number");
@@ -105,19 +105,19 @@ function getPasswordOptions() {
 		return null;
 	}
 
-	var hasSpecialCharacters = confirm("Include Special Characters?");
+	var hasSpecialChars = confirm("Include Special Characters?");
 
-	var hasNumericCharacters = confirm("Include Numerical Characters?");
+	var hasNumericalChars = confirm("Include Numerical Characters?");
 
-	var hasLowerCasedCharacters = confirm("Include Lowercase Characters?");
+	var hasLowerCaseChars = confirm("Include Lowercase Characters?");
 
-	var hasUpperCasedCharacters = confirm("Include Uppercase Characters?");
+	var hasUpperCaseChars = confirm("Include Uppercase Characters?");
 
 	if (
-		hasSpecialCharacters === false &&
-		hasNumericCharacters === false &&
-		hasLowerCasedCharacters === false &&
-		hasUpperCasedCharacters === false
+		hasSpecialChars === false &&
+		hasNumericalChars === false &&
+		hasLowerCaseChars === false &&
+		hasUpperCaseChars === false
 	) {
 		alert("Must select at least one character type");
 		return null;
@@ -125,19 +125,69 @@ function getPasswordOptions() {
 
 	var passwordOptions = {
 		length: length,
-		hasSpecialCharacters: hasSpecialCharacters,
-		hasNumericCharacters: hasNumericCharacters,
-		hasLowerCasedCharacters: hasLowerCasedCharacters,
-		hasUpperCasedCharacters: hasUpperCasedCharacters,
+		hasSpecialChars: hasSpecialChars,
+		hasNumericalChars: hasNumericalChars,
+		hasLowerCaseChars: hasLowerCaseChars,
+		hasUpperCaseChars: hasUpperCaseChars,
 	};
 
 	return passwordOptions;
 }
 
-// Get references to the #generate element
+function getRandom(arr) {
+	var randIndex = Math.floor(Math.random() * arr.length);
+	var randElement = arr[randIndex];
+
+	return randElement;
+}
+
+//* Fucntion that generates the password and allows it to print to index.html.
+
+function generatePassword() {
+	var options = getPasswordOptions();
+
+	var result = [];
+
+	var possibleChars = [];
+
+	var guaranteedChars = [];
+
+	if (!options) return null;
+
+	if (options.hasSpecialChars) {
+		possibleChars = possibleChars.concat(specialCharacters);
+		guaranteedChars.push(getRandom(specialCharacters));
+	}
+
+	if (options.hasNumericalChars) {
+		possibleChars = possibleChars.concat(NumericalChars);
+		guaranteedChars.push(getRandom(NumericalChars));
+	}
+
+	if (options.hasLowerCaseChars) {
+		possibleChars = possibleChars.concat(lowerCaseChars);
+		guaranteedChars.push(getRandom(lowerCaseChars));
+	}
+
+	if (options.hasUpperCaseChars) {
+		possibleChars = possibleChars.concat(upperCaseChars);
+		guaranteedChars.push(getRandom(upperCaseChars));
+	}
+
+	for (var i = 0; i < options.length; i++) {
+		var possibleCharacter = getRandom(possibleChars);
+
+		result.push(possibleCharacter);
+	}
+
+	for (var i = 0; i < guaranteedChars.length; i++) {
+		result[i] = guaranteedChars[i];
+	}
+
+	return result.join("");
+}
 var generateBtn = document.querySelector("#generate");
 
-// Write password to the #password input
 function writePassword() {
 	var password = generatePassword();
 	var passwordText = document.querySelector("#password");
@@ -145,5 +195,4 @@ function writePassword() {
 	passwordText.value = password;
 }
 
-// Add event listener to generate button
 generateBtn.addEventListener("click", writePassword);
